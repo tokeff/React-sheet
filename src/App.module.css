@@ -1,0 +1,36 @@
+#root {
+  margin: 0 auto;
+  text-align: center;
+}
+
+input {
+  width: 108px;
+  height: 28px;
+  color: black;
+  background-color: #dedede;
+  border: solid 1px white;
+}
+
+input:focus {
+  outline: solid black 3px;
+  height: 26px;
+  width: 106px;
+}
+
+td {
+  gap: 0;
+  padding: 0;
+  margin: 0;
+}
+
+tr {
+  gap: 0;
+  padding: 0;
+  margin: 0;
+}
+
+table {
+  margin-top: 28px;
+  padding: 0;
+  gap: 0;
+}
