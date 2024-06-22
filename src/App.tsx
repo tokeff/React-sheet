@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import SheetCell from "./SheetCell";
-import arrowKeysControl from "./arrowKeysControl";
 import Modal from "./Modal";
-import styles from "./App.module.css";
+import Sheet from "./Sheet";
 
 const ROWS_KEY = "rows";
 const COLUMNS_KEY = "columns";
@@ -26,11 +24,6 @@ function App() {
     )
       .fill(null)
       .map(() => new Array(columnAmount).fill(""))
-  );
-
-  const [focusRow, focusColumn, setFocusRow, setFocusColumn] = arrowKeysControl(
-    columnAmount,
-    rows.length
   );
 
   useEffect(() => {
@@ -116,28 +109,7 @@ function App() {
       <button onClick={handleRemoveColumn}>Remove column</button>
       <button onClick={handleAddRow}>Add empty row</button>
       <button onClick={handleRemoveRow}>Remove row</button>
-      <table className={styles.table}>
-        {rows.map((row, rowIndex) => (
-          <tr className={styles.tr} key={rowIndex}>
-            {row.map((_, cellIndex) => (
-              <td className={styles.td} key={cellIndex}>
-                <SheetCell
-                  defaultValue={
-                    localStorage.getItem(
-                      cellIndex.toString() + rowIndex.toString()
-                    ) || ""
-                  }
-                  setColumn={setFocusColumn}
-                  setRow={setFocusRow}
-                  focus={focusRow === rowIndex && focusColumn === cellIndex}
-                  row={rowIndex}
-                  column={cellIndex}
-                />
-              </td>
-            ))}
-          </tr>
-        ))}
-      </table>
+      <Sheet x={columnAmount} y={rows.length} />
     </>
   );
 }

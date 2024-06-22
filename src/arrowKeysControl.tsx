@@ -22,7 +22,7 @@ const arrowKeysControl = (sheetLength: number, sheetHeight: number) => {
 
   return useMemo(
     () => [currentRow, currentColumn, setCurrentRow, setCurrentColumn] as const,
-    [currentRow, currentColumn]
+    [currentColumn, currentRow]
   );
 };
 

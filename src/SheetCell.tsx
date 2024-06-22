@@ -2,16 +2,14 @@ import React, { useEffect, useRef } from "react";
 
 const SheetCell = ({
   focus,
-  row,
   column,
-  defaultValue,
+  row,
   setColumn,
   setRow,
 }: {
   focus: boolean;
-  row: number;
   column: number;
-  defaultValue: string;
+  row: number;
   setColumn: (column: number) => void;
   setRow: (row: number) => void;
 }) => {
@@ -31,13 +29,16 @@ const SheetCell = ({
   const handleClick = () => {
     setColumn(column);
     setRow(row);
+    console.log(column, row);
   };
 
   return (
     <input
       onChange={handleCellChange}
       ref={inputRef}
-      defaultValue={defaultValue}
+      defaultValue={
+        localStorage.getItem(column.toString() + row.toString()) || ""
+      }
       onClick={handleClick}
     />
   );
