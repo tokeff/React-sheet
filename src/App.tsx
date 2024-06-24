@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import Modal from "./Modal";
+import Modal from "./WarningModal";
 import Sheet from "./Sheet";
 
 const ROWS_KEY = "rows";
 const COLUMNS_KEY = "columns";
 
 function App() {
-  const [showModal, setShowModal] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
   const [resultFromModal, setResultFromModal] = useState(false);
   const [contentToRemove, setContentToRemove] = useState<string[]>([]);
 
@@ -15,32 +15,26 @@ function App() {
       ? parseInt(localStorage.getItem(COLUMNS_KEY) ?? "0")
       : 4
   );
-
-  const [rows, setRows] = useState<string[][]>(
-    new Array(
-      localStorage.getItem(ROWS_KEY)
-        ? parseInt(localStorage.getItem(ROWS_KEY) ?? "0")
-        : 4
-    )
-      .fill(null)
-      .map(() => new Array(columnAmount).fill(""))
+  const [rowAmount, setRowAmount] = useState<number>(
+    localStorage.getItem(ROWS_KEY)
+      ? parseInt(localStorage.getItem(ROWS_KEY) ?? "0")
+      : 4
   );
 
   useEffect(() => {
-    localStorage.setItem(ROWS_KEY, rows.length.toString());
-    localStorage.setItem(COLUMNS_KEY, columnAmount.toString());
-  }, [rows, columnAmount]);
+    localStorage.setItem(ROWS_KEY, `${rowAmount}`);
+    localStorage.setItem(COLUMNS_KEY, `${columnAmount}`);
+  }, [rowAmount, columnAmount]);
 
   useEffect(() => {
     if (resultFromModal && columnAmount > 1) {
       if (contentToRemove[0] === COLUMNS_KEY) {
         setColumnAmount((prev) => prev - 1);
-        setRows((prev) => prev.map((row) => row.slice(0, -1)));
         contentToRemove.forEach((key) => {
           localStorage.removeItem(key);
         });
-      } else if (rows.length > 1) {
-        setRows((prev) => prev.slice(0, -1));
+      } else if (rowAmount > 1) {
+        setRowAmount((prev) => prev - 1);
         contentToRemove.forEach((key) => {
           localStorage.removeItem(key);
         });
@@ -51,65 +45,59 @@ function App() {
   }, [resultFromModal]);
 
   const handleAddRow = () => {
-    setRows((prev) => [...prev, new Array(columnAmount).fill("")]);
+    setRowAmount((prev) => prev + 1);
   };
 
   const handleAddColumn = () => {
     setColumnAmount((prev) => prev + 1);
-    setRows((prev) => prev.map((row) => [...row, ""]));
   };
 
-  const handleRemoveColumn = () => {
-    let content: string[] = [COLUMNS_KEY];
-    rows.forEach((_, index) => {
+  const handleRemove = (axis: "rows" | "columns") => {
+    const contentKey = axis === "rows" ? ROWS_KEY : COLUMNS_KEY;
+    const amount = axis === "rows" ? columnAmount : rowAmount;
+    const setAmount = axis === "rows" ? setRowAmount : setColumnAmount;
+    let content: string[] = [contentKey];
+
+    for (let i = 0; i < amount; i++) {
       let key =
-        (rows[rows.length - 1].length - 1).toString() + index.toString();
+        axis === "rows" ? `${i}${rowAmount - 1}` : `${columnAmount - 1}${i}`;
+      console.log(key);
       if (localStorage.getItem(key) !== null) {
         content.push(key);
       }
-    });
-    if (content.length > 1) {
-      setContentToRemove((prev) => [...prev, ...content]);
-      setShowModal(true);
-      return;
     }
-    if (columnAmount > 1) {
-      setColumnAmount((prev) => prev - 1);
-      setRows((prev) => prev.map((row) => row.slice(0, -1)));
-    }
-  };
 
-  const handleRemoveRow = () => {
-    let content: string[] = [ROWS_KEY];
-    for (let i = 0; i <= rows.length; i++) {
-      let key = i.toString() + (rows.length - 1).toString();
-      if (localStorage.getItem(key) !== null) {
-        content.push(key);
-      }
-    }
     if (content.length > 1) {
-      setContentToRemove((prev) => [...prev, ...content]);
-      setShowModal(true);
-      return;
-    }
-    if (rows.length > 1) {
-      setRows((prev) => prev.slice(0, -1));
+      setContentToRemove(content);
+      setShowWarning(true);
+    } else if (amount > 1) {
+      setAmount((prev) => prev - 1);
     }
   };
 
   return (
     <>
-      {showModal && (
+      {showWarning && (
         <Modal
           onButtonClick={setResultFromModal}
-          onClose={() => setShowModal(false)}
+          onClose={() => setShowWarning(false)}
         />
       )}
-      <button onClick={handleAddColumn}>Add empty column</button>
-      <button onClick={handleRemoveColumn}>Remove column</button>
-      <button onClick={handleAddRow}>Add empty row</button>
-      <button onClick={handleRemoveRow}>Remove row</button>
-      <Sheet x={columnAmount} y={rows.length} />
+      <button disabled={showWarning} onClick={handleAddColumn}>
+        Add empty column
+      </button>
+      <button disabled={showWarning} onClick={() => handleRemove(COLUMNS_KEY)}>
+        Remove column
+      </button>
+      <button disabled={showWarning} onClick={handleAddRow}>
+        Add empty row
+      </button>
+      <button disabled={showWarning} onClick={() => handleRemove(ROWS_KEY)}>
+        Remove row
+      </button>
+      <fieldset disabled={showWarning}>
+        <Sheet x={columnAmount} y={rowAmount} />
+      </fieldset>
     </>
   );
 }

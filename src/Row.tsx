@@ -1,5 +1,5 @@
 import SheetCell from "./SheetCell";
-import styles from "./Sheet.module.css";
+import styles from "./sheet.module.css";
 import React from "react";
 
 const Row = ({

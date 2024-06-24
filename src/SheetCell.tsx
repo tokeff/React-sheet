@@ -23,22 +23,19 @@ const SheetCell = ({
 
   const handleCellChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
-    localStorage.setItem(column.toString() + row.toString(), value);
+    localStorage.setItem(`${column}${row}`, value);
   };
 
   const handleClick = () => {
     setColumn(column);
     setRow(row);
-    console.log(column, row);
   };
 
   return (
     <input
       onChange={handleCellChange}
       ref={inputRef}
-      defaultValue={
-        localStorage.getItem(column.toString() + row.toString()) || ""
-      }
+      defaultValue={localStorage.getItem(`${column}${row}`) || ""}
       onClick={handleClick}
     />
   );

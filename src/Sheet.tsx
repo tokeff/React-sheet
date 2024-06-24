@@ -1,5 +1,5 @@
 import Row from "./Row";
-import styles from "./Sheet.module.css";
+import styles from "./sheet.module.css";
 import arrowKeysControl from "./arrowKeysControl";
 
 const Sheet = ({ x, y }: { x: number; y: number }) => {
